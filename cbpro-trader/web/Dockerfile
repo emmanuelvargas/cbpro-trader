@@ -1,4 +1,5 @@
-FROM node:13.6.0
+FROM node:13.6.0-buster
+
 
 # Install node dependencies
 WORKDIR /frontend/

@@ -14,6 +14,8 @@ RUN apt-get install -y python3 python3-pip git locales
 ADD https://downloads.sourceforge.net/project/ta-lib/ta-lib/0.4.0/ta-lib-0.4.0-src.tar.gz /
 RUN tar xzvf ta-lib-0.4.0-src.tar.gz
 WORKDIR /ta-lib/
+ADD 'http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' config.guess
+ADD 'http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' config.sub
 RUN ./configure --prefix=/usr
 RUN make
 RUN make install

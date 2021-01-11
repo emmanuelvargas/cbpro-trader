@@ -5,8 +5,16 @@ services:
     command: python3 ./cbpro-trader.py
     volumes:
       - ./cbpro-trader/daemon/:/cbpro-trader/:Z
+    expose:
+      - 5000
+    ports:
+      - "5000:5000"
   web:
     build: ./cbpro-trader/web
     command: bash -c "npm install && npm start"
     volumes:
       - ./cbpro-trader/web/:/frontend/:Z
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"

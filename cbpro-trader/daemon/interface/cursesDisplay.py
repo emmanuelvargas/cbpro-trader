@@ -24,8 +24,8 @@ class cursesDisplay:
         self.pad.addstr(1, 0, "Waiting for a trade...")
 
     def update_balances(self, trade_engine):
-        self.pad.addstr(0, 0, "%s: %.2f BTC: %.8f" %
-                        (trade_engine.fiat_currency, trade_engine.balances[trade_engine.fiat_currency], trade_engine.balances['BTC']))
+        self.pad.addstr(0, 0, "%s: %.2f ETH: %.8f" %
+                        (trade_engine.fiat_currency, trade_engine.balances[trade_engine.fiat_currency], trade_engine.balances['ETH']))
         self.pad.addstr(1, 0, "%s_EQUIV: %.2f" %
                         (trade_engine.fiat_currency, trade_engine.balances['fiat_equivalent']))
 
@@ -52,10 +52,16 @@ class cursesDisplay:
         for cur_period in period_list:
             stoch_diff = Decimal(indicators[cur_period.name]['stoch_slowk']) - Decimal(indicators[cur_period.name]['stoch_slowd'])
             obv_diff = Decimal(indicators[cur_period.name]['obv']) - Decimal(indicators[cur_period.name]['obv_ema'])
-            self.pad.addstr(starty, 0, "%s - OBV_DIFF: %f STOCH_DIFF: %f ADX: %f" %
-                            (cur_period.name, obv_diff, stoch_diff, indicators[cur_period.name]['adx']),
+            sma20 = Decimal(indicators[cur_period.name]['sma20']) - Decimal(indicators[cur_period.name]['ema20'])
+            rsi = Decimal(indicators[cur_period.name]['rsi'])
+            self.pad.addstr(starty, 0, "%s - EMA_DIFF: %f STOCH_DIFF: %f RSI: %f" %
+                            (cur_period.name, sma20, stoch_diff, rsi),
                             self.print_color(Decimal(obv_diff), Decimal('0.0')))
+            #self.pad.addstr(starty, 0, "%s - OBV_DIFF: %f STOCH_DIFF: %f ADX: %f" %
+            #                (cur_period.name, obv_diff, stoch_diff, indicators[cur_period.name]['adx']),
+            #                self.print_color(Decimal(obv_diff), Decimal('0.0')))
             starty += 1
+
         self.starty = starty + 1
 
     def update_fills(self, trade_engine):

@@ -13,7 +13,7 @@ class web(object):
 
         @app.route('/products/')
         def products():
-            return jsonify(self.trade_engine.available_products)
+            return jsonify(sorted(self.trade_engine.available_products))
     
         @app.route('/periods/')
         @app.route('/periods/<periodName>')

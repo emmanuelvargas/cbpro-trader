@@ -276,10 +276,10 @@ class TradeEngine():
             for cur_period in period_list:
                 # Moving Average Strategy
                 # rsi(14) < 80  && current-price < sma(20) && sma(20) > ema(20)
-                new_buy_flag = Decimal(indicators[cur_period.name]['rsi']) < Decimal('70') and Decimal(indicators[cur_period.name]['sma20']) > Decimal(indicators[cur_period.name]['ema20'])
+                new_buy_flag = Decimal(indicators[cur_period.name]['rsi']) < Decimal('70') and Decimal(indicators[cur_period.name]['sma14']) > Decimal(indicators[cur_period.name]['ema4'])
                 # new_sell_flag = new_sell_flag or Decimal(indicators[cur_period.name]['sma_trend']) < Decimal('0.0')
                 # rsi(14) > 80 && current-price > sma(20) && sma(20) < ema(20)
-                new_sell_flag = Decimal(indicators[cur_period.name]['rsi']) > Decimal('70') and Decimal(indicators[cur_period.name]['sma20']) < Decimal(indicators[cur_period.name]['ema20'])
+                new_sell_flag = Decimal(indicators[cur_period.name]['rsi']) > Decimal('70') and Decimal(indicators[cur_period.name]['sma14']) < Decimal(indicators[cur_period.name]['ema4'])
             if product_id == 'LTC-BTC' or product_id == 'ETH-BTC':
                 ltc_or_eth_fiat_product = self.get_product_by_product_id(product_id[:3] + '-' + self.fiat_currency)
                 btc_fiat_product = self.get_product_by_product_id('BTC-' + self.fiat_currency)

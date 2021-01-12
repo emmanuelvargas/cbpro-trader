@@ -24,6 +24,8 @@ class IndicatorSubsystem:
             self.calculate_sma(cur_period.name, closing_prices_close)
             self.calculate_rsi(cur_period.name, closing_prices_close)
             self.calculate_stoch(cur_period.name, closing_prices_close)
+            self.calculate_macd(cur_period.name, closing_prices_close)
+            self.calculate_bbands(cur_period.name, closing_prices_close)
             self.calculate_adx(cur_period.name, closing_prices_close)
             self.calculate_obv(cur_period.name, closing_prices_close, volumes)
 
@@ -40,10 +42,10 @@ class IndicatorSubsystem:
 
         self.current_indicators[period_name]['sma'] = sma[-1]
         self.current_indicators[period_name]['sma_trend'] = sma[-1] - sma[-2]
-        sma20 = talib.SMA(closing_prices, timeperiod=14)
-        self.current_indicators[period_name]['sma20'] = sma20[-1]
-        ema20 = talib.EMA(closing_prices, timeperiod=4)
-        self.current_indicators[period_name]['ema20'] = ema20[-1]
+        sma14 = talib.SMA(closing_prices, timeperiod=14)
+        self.current_indicators[period_name]['sma14'] = sma14[-1]
+        ema4 = talib.EMA(closing_prices, timeperiod=4)
+        self.current_indicators[period_name]['ema4'] = ema4[-1]
 
     def calculate_adx(self, period_name, close):
         adx = talib.ADX(self.highs, self.lows, close, timeperiod=14)
@@ -68,7 +70,8 @@ class IndicatorSubsystem:
         self.current_indicators[period_name]['macd'] = macd[-1]
         self.current_indicators[period_name]['macd_sig'] = macd_sig[-1]
         self.current_indicators[period_name]['macd_hist'] = macd_hist[-1]
-        self.current_indicators[period_name]['macd_hist_diff'] = Decimal(macd_hist[-1]) - Decimal(macd_hist[-2])
+        macd_hist_diff = Decimal(macd_hist[-1]) - Decimal(macd_hist[-2])
+        self.current_indicators[period_name]['macd_hist_diff'] = str(macd_hist_diff)
 
     def calculate_vol_macd(self, period_name, volumes):
         macd, macd_sig, macd_hist = talib.MACD(volumes, fastperiod=50,

@@ -18,12 +18,17 @@ class TradeEngine():
         self.available_products = []
         self.products = []
         self.balances = {}
+        self.last_buy_price = {}
+        self.last_sell_price = {}
         self.stop_update_order_thread = False
         self.last_order_update = time.time()
         self.all_open_orders = []
         self.recent_fills = []
         for product in self.product_list:
             self.products.append(Product(auth_client, product_id=product))
+            self.last_buy_price[product] = None
+            self.last_sell_price[product] = None
+            self.update_last_sell_buy(product)
         self.last_balance_update = 0
         self.update_amounts()
         self.init_available_products()
@@ -31,6 +36,19 @@ class TradeEngine():
         self.max_slippage = max_slippage
         self.update_order_thread = threading.Thread(target=self.update_orders, name='update_orders')
         self.update_order_thread.start()
+
+    def update_last_sell_buy(self, product='BTC-USD'):
+        init_last_buy_price = True
+        init_last_sell_price = True
+        for order in self.auth_client.get_orders(product, 'done'):
+            if order['side'] == 'buy' and init_last_buy_price:
+                self.last_buy_price[product] = float(order['executed_value']) / float(order['filled_size'])
+                init_last_buy_price = False
+            elif init_last_sell_price:
+                self.last_sell_price[product] = order['price']
+                init_last_sell_price = False
+            elif init_last_buy_price is False and init_last_sell_price is False:
+                break
 
     def close(self, exit=False):
         if exit:
@@ -106,6 +124,7 @@ class TradeEngine():
             for product in self.products:
                 if not product.meta and product.order_book.get_current_ticker() and product.order_book.get_current_ticker().get('price'):
                     self.balances['fiat_equivalent'] += self.get_base_currency_from_product_id(product.product_id, update=False) * Decimal(product.order_book.get_current_ticker().get('price'))
+                self.update_last_sell_buy(product.product_id)
             self.balances['fiat_equivalent'] += self.balances[self.fiat_currency]
 
     def print_amounts(self):
@@ -249,7 +268,6 @@ class TradeEngine():
 
         if self.is_live:
             product = self.get_product_by_product_id(product_id)
-
             # new_buy_flag = True
             # new_sell_flag = False
 

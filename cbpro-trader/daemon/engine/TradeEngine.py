@@ -42,10 +42,18 @@ class TradeEngine():
         init_last_sell_price = True
         for order in self.auth_client.get_orders(product, 'done'):
             if order['side'] == 'buy' and init_last_buy_price:
-                self.last_buy_price[product] = float(order['executed_value']) / float(order['filled_size'])
+                try:
+                    self.last_buy_price[product] = order['price']
+                except KeyError:
+                    self.last_buy_price[product] = float(
+                        order['executed_value']) / float(order['filled_size'])
                 init_last_buy_price = False
             elif init_last_sell_price:
-                self.last_sell_price[product] = order['price']
+                try:
+                    self.last_sell_price[product] = order['price']
+                except KeyError:
+                    self.last_sell_price[product] = float(
+                        order['executed_value']) / float(order['filled_size'])
                 init_last_sell_price = False
             elif init_last_buy_price is False and init_last_sell_price is False:
                 break
@@ -276,10 +284,22 @@ class TradeEngine():
             for cur_period in period_list:
                 # Moving Average Strategy
                 # rsi(14) < 80  && current-price < sma(20) && sma(20) > ema(20)
-                new_buy_flag = Decimal(indicators[cur_period.name]['rsi']) < Decimal('70') and Decimal(indicators[cur_period.name]['sma14']) > Decimal(indicators[cur_period.name]['ema4'])
+                new_buy_flag = Decimal(
+                    indicators[cur_period.name]['rsi']) < Decimal(
+                        '40') and Decimal(
+                            indicators[cur_period.name]['sma14']) > Decimal(
+                                indicators[cur_period.name]['ema4'])
                 # new_sell_flag = new_sell_flag or Decimal(indicators[cur_period.name]['sma_trend']) < Decimal('0.0')
                 # rsi(14) > 80 && current-price > sma(20) && sma(20) < ema(20)
-                new_sell_flag = Decimal(indicators[cur_period.name]['rsi']) > Decimal('70') and Decimal(indicators[cur_period.name]['sma14']) < Decimal(indicators[cur_period.name]['ema4'])
+                new_sell_flag = Decimal(
+                    indicators[cur_period.name]['rsi']) > Decimal(
+                        '70') and Decimal(
+                            indicators[cur_period.name]['sma14']) < Decimal(
+                                indicators[cur_period.name]['ema4'])
+            # Stop loss
+            last_buy_price = self.last_buy_price[product_id]
+            if indicators[cur_period.name]['close'] < last_buy_price * 0.995:
+                new_sell_flag = True
             if product_id == 'LTC-BTC' or product_id == 'ETH-BTC':
                 ltc_or_eth_fiat_product = self.get_product_by_product_id(product_id[:3] + '-' + self.fiat_currency)
                 btc_fiat_product = self.get_product_by_product_id('BTC-' + self.fiat_currency)

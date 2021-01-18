@@ -300,6 +300,11 @@ class TradeEngine():
             last_buy_price = self.last_buy_price[product_id]
             if indicators[cur_period.name]['close'] < last_buy_price * 0.995:
                 new_sell_flag = True
+            # Run away limit
+            last_sell_price = self.last_sell_price[product_id]
+            if indicators[cur_period.name]['close'] > last_sell_price * 1.05:
+                new_buy_flag = True
+
             if product_id == 'LTC-BTC' or product_id == 'ETH-BTC':
                 ltc_or_eth_fiat_product = self.get_product_by_product_id(product_id[:3] + '-' + self.fiat_currency)
                 btc_fiat_product = self.get_product_by_product_id('BTC-' + self.fiat_currency)

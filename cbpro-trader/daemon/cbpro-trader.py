@@ -44,8 +44,8 @@ class CBProTrader(object):
 
             if self.config['frontend'] == 'web':
                 self.web_interface = interface.web(
-                    self.indicator_subsys, self.trade_engine, self.config,
-                    self.init_engine_and_indicators)
+                    self.indicator_subsys, self.trade_engine,
+                    self.config, self.init_engine_and_indicators)
                 self.server_thread = threading.Thread(
                     target=self.web_interface.start, daemon=True)
                 self.server_thread.start()

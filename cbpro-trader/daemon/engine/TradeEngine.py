@@ -1,3 +1,5 @@
+import imp
+import os
 import time
 import logging
 import threading
@@ -42,6 +44,16 @@ class TradeEngine():
         self.update_order_thread = threading.Thread(
             target=self.update_orders, name='update_orders')
         self.update_order_thread.start()
+
+    def available_strategies(self):
+        file, pathname, description = imp.find_module("strategies")
+        if file:
+            raise ImportError('Not a package: %r', "strategies")
+        return set(
+            [os.path.splitext(
+                module)[0] for module in os.listdir(
+                    pathname) if module.endswith(
+                        'py') and module != '__init__.py'])
 
     def update_last_sell_buy(self, product='BTC-USD'):
         init_last_buy_price = True

@@ -16,10 +16,14 @@ class IndicatorSubsystem:
         total_periods = len(cur_period.candlesticks)
         if total_periods > 0:
             closing_prices = cur_period.get_closing_prices()
-            closing_prices_close = np.append(closing_prices, cur_period.cur_candlestick.close)
-            self.highs = np.append(cur_period.get_highs(), cur_period.cur_candlestick.high)
-            self.lows = np.append(cur_period.get_lows(), cur_period.cur_candlestick.low)
-            volumes = np.append(cur_period.get_volumes(), cur_period.cur_candlestick.volume)
+            closing_prices_close = np.append(
+                closing_prices, cur_period.cur_candlestick.close)
+            self.highs = np.append(
+                cur_period.get_highs(), cur_period.cur_candlestick.high)
+            self.lows = np.append(
+                cur_period.get_lows(), cur_period.cur_candlestick.low)
+            volumes = np.append(
+                cur_period.get_volumes(), cur_period.cur_candlestick.volume)
 
             self.calculate_sma(cur_period.name, closing_prices_close)
             self.calculate_rsi(cur_period.name, closing_prices_close)
@@ -29,8 +33,10 @@ class IndicatorSubsystem:
             self.calculate_adx(cur_period.name, closing_prices_close)
             self.calculate_obv(cur_period.name, closing_prices_close, volumes)
 
-            self.current_indicators[cur_period.name]['close'] = cur_period.cur_candlestick.close
-            self.current_indicators[cur_period.name]['total_periods'] = total_periods
+            self.current_indicators[
+                cur_period.name]['close'] = cur_period.cur_candlestick.close
+            self.current_indicators[
+                cur_period.name]['total_periods'] = total_periods
 
     def calculate_rsi(self, period_name, closing_prices):
         rsi = talib.RSI(closing_prices, timeperiod=14)
@@ -54,12 +60,14 @@ class IndicatorSubsystem:
 
     def calculate_bbands(self, period_name, close):
         timeperiod = 20
-        upperband_1, middleband_1, lowerband_1 = talib.BBANDS(close, timeperiod=timeperiod, nbdevup=1, nbdevdn=1, matype=0)
+        upperband_1, middleband_1, lowerband_1 = talib.BBANDS(
+            close, timeperiod=timeperiod, nbdevup=1, nbdevdn=1, matype=0)
 
         self.current_indicators[period_name]['bband_upper_1'] = upperband_1[-1]
         self.current_indicators[period_name]['bband_lower_1'] = lowerband_1[-1]
 
-        upperband_2, middleband_2, lowerband_2 = talib.BBANDS(close, timeperiod=timeperiod, nbdevup=2, nbdevdn=2, matype=0)
+        upperband_2, middleband_2, lowerband_2 = talib.BBANDS(
+            close, timeperiod=timeperiod, nbdevup=2, nbdevdn=2, matype=0)
 
         self.current_indicators[period_name]['bband_upper_2'] = upperband_2[-1]
         self.current_indicators[period_name]['bband_lower_2'] = lowerband_2[-1]
@@ -71,7 +79,8 @@ class IndicatorSubsystem:
         self.current_indicators[period_name]['macd_sig'] = macd_sig[-1]
         self.current_indicators[period_name]['macd_hist'] = macd_hist[-1]
         macd_hist_diff = Decimal(macd_hist[-1]) - Decimal(macd_hist[-2])
-        self.current_indicators[period_name]['macd_hist_diff'] = str(macd_hist_diff)
+        self.current_indicators[period_name]['macd_hist_diff'] = str(
+            macd_hist_diff)
 
     def calculate_vol_macd(self, period_name, volumes):
         macd, macd_sig, macd_hist = talib.MACD(volumes, fastperiod=50,
@@ -98,12 +107,16 @@ class IndicatorSubsystem:
         self.current_indicators[period_name]['sar'] = sar[-1]
 
     def calculate_stochrsi(self, period_name, closing_prices):
-        fastk, fastd = talib.STOCHRSI(closing_prices, timeperiod=14, fastk_period=3, fastd_period=3, fastd_matype=0)
+        fastk, fastd = talib.STOCHRSI(
+            closing_prices, timeperiod=14, fastk_period=3,
+            fastd_period=3, fastd_matype=0)
         self.current_indicators[period_name]['stochrsi_fastk'] = fastk[-1]
         self.current_indicators[period_name]['stochrsi_fastd'] = fastd[-1]
 
     def calculate_stoch(self, period_name, closing_prices):
-        slowk, slowd = talib.STOCH(self.highs, self.lows, closing_prices, fastk_period=14, slowk_period=2, slowk_matype=0, slowd_period=3, slowd_matype=0)
+        slowk, slowd = talib.STOCH(
+            self.highs, self.lows, closing_prices, fastk_period=14,
+            slowk_period=2, slowk_matype=0, slowd_period=3, slowd_matype=0)
         self.current_indicators[period_name]['stoch_slowk'] = slowk[-1]
         self.current_indicators[period_name]['stoch_slowd'] = slowd[-1]
 

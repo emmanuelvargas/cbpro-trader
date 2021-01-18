@@ -158,9 +158,9 @@ class TradeEngine():
                 self.fiat_currency]
 
     def print_amounts(self):
-        self.logger.debug("[BALANCES] %s: %.2f BTC: %.8f" % (
+        self.logger.debug("[BALANCES] %s: %.2f ETH: %.8f" % (
             self.fiat_currency, self.balances[self.fiat_currency],
-            self.balances['BTC']))
+            self.balances['ETH']))
 
     def place_buy(self, product=None, partial='1.0'):
         amount = self.get_quoted_currency_from_product_id(

@@ -10,13 +10,14 @@ from .Product import Product
 class TradeEngine():
     def __init__(
         self, auth_client, product_list=[
-            'BTC-USD', 'ETH-USD', 'LTC-USD'], fiat='USD', is_live=False,
-            max_slippage=Decimal('0.10')):
+            'BTC-USD', 'ETH-USD', 'LTC-USD'], fiat='USD', crypto='ETH',
+            is_live=False, max_slippage=Decimal('0.10')):
         self.logger = logging.getLogger('trader-logger')
         self.error_logger = logging.getLogger('error-logger')
         self.auth_client = auth_client
         self.product_list = product_list
         self.fiat_currency = fiat
+        self.crypto_currency = crypto
         self.is_live = is_live
         self.market_orders = True  # TODO: make this a config option
         self.available_products = []
@@ -158,9 +159,9 @@ class TradeEngine():
                 self.fiat_currency]
 
     def print_amounts(self):
-        self.logger.debug("[BALANCES] %s: %.2f ETH: %.8f" % (
+        self.logger.debug("[BALANCES] %s: %.2f %s: %.8f" % (
             self.fiat_currency, self.balances[self.fiat_currency],
-            self.balances['ETH']))
+            self.crypto_currency, self.balances[self.crypto_currency]))
 
     def place_buy(self, product=None, partial='1.0'):
         amount = self.get_quoted_currency_from_product_id(

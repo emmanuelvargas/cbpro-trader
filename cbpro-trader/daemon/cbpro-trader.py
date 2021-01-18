@@ -63,6 +63,10 @@ class CBProTrader(object):
         # List of products that we are actually monitoring
         self.product_list = set()
         fiat_currency = self.config['fiat']
+        try:
+            crypto_currency = self.config['crypto']
+        except KeyError:
+            crypto_currency = 'BTC'
         if self.config['sandbox']:
             api_url = "https://api-public.sandbox.pro.coinbase.com"
         else:
@@ -93,8 +97,8 @@ class CBProTrader(object):
         max_slippage = Decimal(str(self.config['max_slippage']))
         self.trade_engine = engine.TradeEngine(
             auth_client, product_list=self.product_list,
-            fiat=fiat_currency, is_live=self.config['live'],
-            max_slippage=max_slippage)
+            fiat=fiat_currency, crypto=crypto_currency,
+            is_live=self.config['live'], max_slippage=max_slippage)
         self.cbpro_websocket = engine.TradeAndHeartbeatWebsocket(
             fiat=fiat_currency, sandbox=self.config['sandbox'])
         self.cbpro_websocket.start()

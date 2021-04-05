@@ -8,7 +8,7 @@ ENV TERM xterm
 # Update Ubuntu & install system dependencies
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get install -y python3 python3-pip git locales
+RUN apt-get install -y python3 python3-pip git locales net-tools telnet
 
 # Build and install ta-lib
 ADD https://downloads.sourceforge.net/project/ta-lib/ta-lib/0.4.0/ta-lib-0.4.0-src.tar.gz /
